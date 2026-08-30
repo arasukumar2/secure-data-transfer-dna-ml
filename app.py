@@ -38,7 +38,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 # False for local HTTP development.
 # Change to True when deployed with HTTPS.
 
-app.config["SESSION_COOKIE_SECURE"] = true
+app.config["SESSION_COOKIE_SECURE"] = True
 
 
 # ==========================================
