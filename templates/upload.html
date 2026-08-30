@@ -76,6 +76,20 @@
 
 
             <a
+                href="{{ url_for('dashboard_routes.profile') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">👤</span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+
+            <a
                 href="{{ url_for('file_routes.upload_page') }}"
                 class="nav-item active"
             >
@@ -124,7 +138,7 @@
 
 
             <a
-                href="{{ url_for('dashboard_routes.dashboard') }}#security-section"
+                href="{{ url_for('dashboard_routes.security') }}"
                 class="nav-item"
             >
 
@@ -140,7 +154,7 @@
 
 
             <a
-                href="{{ url_for('dashboard_routes.dashboard') }}#settings-section"
+                href="{{ url_for('dashboard_routes.settings') }}"
                 class="nav-item"
             >
 
@@ -296,21 +310,21 @@
 
 
                         <a
-                            href="{{ url_for('dashboard_routes.dashboard') }}"
+                            href="{{ url_for('dashboard_routes.profile') }}"
                         >
                             👤 My Profile
                         </a>
 
 
                         <a
-                            href="{{ url_for('dashboard_routes.dashboard') }}#security-section"
+                            href="{{ url_for('dashboard_routes.security') }}"
                         >
                             🔐 Security
                         </a>
 
 
                         <a
-                            href="{{ url_for('dashboard_routes.dashboard') }}#settings-section"
+                            href="{{ url_for('dashboard_routes.settings') }}"
                         >
                             ⚙ Settings
                         </a>
