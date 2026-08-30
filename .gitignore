@@ -9,13 +9,9 @@ uploads/*
 downloads/*
 decrypted/*
 encrypted/*
-cloud_storage/*
 
-!uploads/.gitkeep
-!downloads/.gitkeep
-!decrypted/.gitkeep
-!encrypted/.gitkeep
-!cloud_storage/.gitkeep
+cloud_storage/data/*
+cloud_storage/__pycache__/*
 
 .pytest_cache/
 .vscode/
