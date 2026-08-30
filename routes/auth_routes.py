@@ -219,11 +219,6 @@ def login():
                 "Invalid username or password."
             )
 
-
-            # No user_id is available,
-            # therefore this failed attempt
-            # cannot be associated with a user.
-
             try:
 
                 add_security_audit_log(
@@ -334,8 +329,17 @@ def login():
 
 
         # ======================================
-        # GO TO DASHBOARD
+        # REDIRECT BASED ON USER ROLE
         # ======================================
+
+        if user["username"].lower() == "admin":
+
+            return redirect(
+                url_for(
+                    "dashboard_routes.admin_dashboard"
+                )
+            )
+
 
         return redirect(
             url_for(
