@@ -7,8 +7,14 @@ from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from routes.transfer_routes import transfer_routes
 
-from database.database import initialize_database
+from database.database import (
+    initialize_database,
+    create_initial_admin
+)
 
+initialize_database()
+
+create_initial_admin()
 
 # ==========================================
 # FLASK APPLICATION
