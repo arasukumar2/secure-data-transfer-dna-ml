@@ -1,7 +1,8 @@
 from flask import (
     Blueprint,
     render_template,
-    session
+    session,
+    abort
 )
 
 from database.database import (
@@ -10,7 +11,9 @@ from database.database import (
     get_user_storage_size,
     get_user_transfer_count,
     get_recent_transfers,
-    get_security_audit_logs
+    get_security_audit_logs,
+    get_all_users,
+    get_all_security_audit_logs
 )
 
 from utils.auth_utils import login_required
@@ -23,6 +26,29 @@ dashboard_routes = Blueprint(
 
 
 # ==========================================
+# ADMIN CONFIGURATION
+# ==========================================
+
+ADMIN_USERNAME = "admin"
+
+
+# ==========================================
+# ADMIN ACCESS CHECK
+# ==========================================
+
+def admin_required():
+
+    username = session.get(
+        "username",
+        ""
+    )
+
+    if username.lower() != ADMIN_USERNAME.lower():
+
+        abort(403)
+
+
+# ==========================================
 # REAL SECURITY CHECKS
 # ==========================================
 
@@ -31,24 +57,33 @@ def calculate_security_score():
     security_checks = []
 
     # 1. Authentication
+
     authentication_active = True
 
     security_checks.append({
         "name": "Authentication Protection",
-        "status": "Active" if authentication_active else "Warning"
+        "status":
+            "Active"
+            if authentication_active
+            else "Warning"
     })
 
 
     # 2. File Ownership
+
     ownership_active = True
 
     security_checks.append({
         "name": "File Ownership Protection",
-        "status": "Active" if ownership_active else "Warning"
+        "status":
+            "Active"
+            if ownership_active
+            else "Warning"
     })
 
 
     # 3. DNA Cryptography
+
     try:
 
         from crypto.dna_encoder import bytes_to_dna
@@ -56,11 +91,17 @@ def calculate_security_score():
 
         test_data = b"SECURE_TEST"
 
-        dna = bytes_to_dna(test_data)
+        dna = bytes_to_dna(
+            test_data
+        )
 
-        restored = dna_to_bytes(dna)
+        restored = dna_to_bytes(
+            dna
+        )
 
-        dna_active = restored == test_data
+        dna_active = (
+            restored == test_data
+        )
 
     except Exception as error:
 
@@ -74,11 +115,15 @@ def calculate_security_score():
 
     security_checks.append({
         "name": "DNA Cryptography",
-        "status": "Active" if dna_active else "Warning"
+        "status":
+            "Active"
+            if dna_active
+            else "Warning"
     })
 
 
     # 4. LSTM Model
+
     try:
 
         import os
@@ -98,11 +143,15 @@ def calculate_security_score():
 
     security_checks.append({
         "name": "LSTM Key Generation",
-        "status": "Active" if lstm_active else "Warning"
+        "status":
+            "Active"
+            if lstm_active
+            else "Warning"
     })
 
 
     # 5. XOR Encryption
+
     try:
 
         from crypto.encryption import (
@@ -140,11 +189,15 @@ def calculate_security_score():
 
     security_checks.append({
         "name": "XOR Encryption",
-        "status": "Active" if xor_active else "Warning"
+        "status":
+            "Active"
+            if xor_active
+            else "Warning"
     })
 
 
     # 6. Secure Cloud Storage
+
     try:
 
         import os
@@ -162,11 +215,15 @@ def calculate_security_score():
 
     security_checks.append({
         "name": "Secure Cloud Storage",
-        "status": "Active" if cloud_active else "Warning"
+        "status":
+            "Active"
+            if cloud_active
+            else "Warning"
     })
 
 
     # 7. Transfer History
+
     try:
 
         transfers = get_recent_transfers(
@@ -197,6 +254,7 @@ def calculate_security_score():
 
 
     # 8. Plaintext Cleanup
+
     try:
 
         import os
@@ -517,4 +575,43 @@ def profile():
         "profile.html",
 
         username=username
+    )
+
+
+# ==========================================
+# ADMIN DASHBOARD
+# ==========================================
+
+@dashboard_routes.route(
+    "/admin",
+    methods=["GET"]
+)
+@login_required
+def admin_dashboard():
+
+    # Server-side admin protection
+
+    admin_required()
+
+
+    users = get_all_users()
+
+    audit_logs = (
+        get_all_security_audit_logs(
+            limit=200
+        )
+    )
+
+
+    return render_template(
+        "admin.html",
+
+        username=session.get(
+            "username",
+            "ADMIN"
+        ),
+
+        users=users,
+
+        audit_logs=audit_logs
     )

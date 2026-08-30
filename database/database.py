@@ -1073,3 +1073,60 @@ def get_user_transfer_count(
     connection.close()
 
     return result["count"]
+# ==========================================
+# GET ALL USERS - ADMIN
+# ==========================================
+
+def get_all_users():
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            username,
+            created_at
+        FROM users
+        ORDER BY id ASC
+    """)
+
+    users = cursor.fetchall()
+
+    connection.close()
+
+    return users
+
+
+# ==========================================
+# GET ALL SECURITY AUDIT LOGS - ADMIN
+# ==========================================
+
+def get_all_security_audit_logs(limit=200):
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            security_audit_logs.id,
+            security_audit_logs.user_id,
+            users.username,
+            security_audit_logs.action,
+            security_audit_logs.description,
+            security_audit_logs.status,
+            security_audit_logs.created_at
+        FROM security_audit_logs
+        LEFT JOIN users
+            ON security_audit_logs.user_id = users.id
+        ORDER BY security_audit_logs.id DESC
+        LIMIT ?
+    """, (limit,))
+
+    logs = cursor.fetchall()
+
+    connection.close()
+
+    return logs
