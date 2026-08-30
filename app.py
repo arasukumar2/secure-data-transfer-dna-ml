@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 
 from routes.file_routes import file_routes
 from routes.dashboard_routes import dashboard_routes
@@ -76,6 +76,17 @@ app.register_blueprint(
 app.register_blueprint(
     transfer_routes
 )
+
+
+# ==========================================
+# HOME ROUTE
+# ==========================================
+
+@app.route("/")
+def home():
+    return redirect(
+        url_for("auth_routes.login")
+    )
 
 
 # ==========================================
