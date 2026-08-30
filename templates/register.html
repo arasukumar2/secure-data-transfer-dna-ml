@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account</title>
+
+</head>
+
+
+<body>
+
+    <h1>
+        Secure Data Transfer
+    </h1>
+
+    <h2>
+        Create Account
+    </h2>
+
+
+    {% with messages = get_flashed_messages() %}
+
+        {% for message in messages %}
+
+            <p>
+                {{ message }}
+            </p>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            minlength="3"
+            required
+        >
+
+        <br><br>
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            minlength="6"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+
+    <p>
+
+        Already have an account?
+
+        <a href="{{ url_for('auth_routes.login') }}">
+            Login
+        </a>
+
+    </p>
+
+</body>
+
+</html>

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SecureData Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="app-container">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SD
+            </div>
+
+            <div class="brand-text">
+
+                <h2>
+                    SecureData
+                </h2>
+
+                <span>
+                    Cloud Security
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}"
+                class="nav-item active"
+            >
+
+                <span class="nav-icon">⌂</span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">↑</span>
+
+                <span>
+                    Upload File
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.my_files') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">▣</span>
+
+                <span>
+                    My Files
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('transfer_routes.transfers') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">↔</span>
+
+                <span>
+                    Transfers
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.security') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">◉</span>
+
+                <span>
+                    Security
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.settings') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">⚙</span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- SIDEBAR SECURITY STATUS -->
+
+        <div class="sidebar-security">
+
+            <div class="security-check">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    System Secure
+                </strong>
+
+                <span>
+                    All services operational
+                </span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+
+            <div class="page-heading">
+
+                <span class="eyebrow">
+                    SECURITY CENTER
+                </span>
+
+
+                <h1>
+
+                    Good morning,
+
+                    <span>
+                        {{ username }}
+                    </span>
+
+                </h1>
+
+
+                <p>
+                    Monitor your encrypted cloud data in real time.
+                </p>
+
+            </div>
+
+
+
+            <!-- HEADER ACTIONS -->
+
+            <div class="header-actions">
+
+
+                <!-- =================================================
+                     NOTIFICATIONS
+                ================================================== -->
+
+                <div class="notification-wrapper">
+
+                    <button
+                        class="notification-btn"
+                        id="notificationBtn"
+                        type="button"
+                        aria-label="Notifications"
+                        title="Notifications"
+                    >
+
+                        🔔
+
+                        {% if activities %}
+                            <span
+                                class="notification-dot"
+                                id="notificationDot"
+                            ></span>
+                        {% endif %}
+
+                    </button>
+
+
+                    <!-- NOTIFICATION PANEL -->
+
+                    <div
+                        class="notification-panel"
+                        id="notificationPanel"
+                    >
+
+                        <div class="notification-header">
+
+                            <div>
+
+                                <strong>
+                                    Notifications
+                                </strong>
+
+                                <span>
+                                    Recent security activity
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                id="markNotificationsRead"
+                            >
+                                Mark read
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="notification-list"
+                            id="notificationList"
+                        >
+
+                            {% if activities %}
+
+                                {% for transfer in activities[:5] %}
+
+                                    <div class="notification-item">
+
+
+                                        <div class="notification-icon">
+
+                                            {% if transfer["action"] == "UPLOAD" %}
+
+                                                ↑
+
+                                            {% elif transfer["action"] == "DOWNLOAD" %}
+
+                                                ↓
+
+                                            {% elif transfer["action"] == "DELETE" %}
+
+                                                🗑
+
+                                            {% else %}
+
+                                                🔐
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div class="notification-content">
+
+                                            <strong>
+                                                {{ transfer["action"]|title }}
+                                            </strong>
+
+                                            <span>
+                                                Secure activity completed
+                                            </span>
+
+                                            <small>
+                                                {{ transfer["created_at"] }}
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="empty-notifications">
+
+                                    <div class="empty-notification-icon">
+                                        🔔
+                                    </div>
+
+                                    <strong>
+                                        No new notifications
+                                    </strong>
+
+                                    <span>
+                                        Your security activity will appear here.
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     USER PROFILE
+                ================================================== -->
+
+                <div
+                    class="user-profile"
+                    id="userProfile"
+                >
+
+                    <div
+                        class="user-profile-trigger"
+                        id="userProfileTrigger"
+                    >
+
+                        <div class="user-avatar">
+
+                            {{ username[0]|upper }}
+
+                        </div>
+
+
+                        <div class="user-details">
+
+                            <strong>
+                                {{ username }}
+                            </strong>
+
+                            <span>
+                                Secure Account
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PROFILE MENU -->
+
+                    <div
+                        class="profile-menu"
+                        id="profileMenu"
+                    >
+
+                        <div class="profile-menu-header">
+
+                            <div class="large-avatar">
+
+                                {{ username[0]|upper }}
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    {{ username }}
+                                </strong>
+
+                                <span>
+                                    Secure Account
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="profile-divider"></div>
+
+
+                        <!-- PROFILE -->
+
+                        <a
+                            href="{{ url_for('dashboard_routes.profile') }}"
+                        >
+
+                            👤
+
+                            <span>
+                                My Profile
+                            </span>
+
+                        </a>
+
+
+                        <!-- SECURITY -->
+
+                        <a
+                            href="{{ url_for('dashboard_routes.security') }}"
+                        >
+
+                            🔐
+
+                            <span>
+                                Security
+                            </span>
+
+                        </a>
+
+
+                        <!-- SETTINGS -->
+
+                        <a
+                            href="{{ url_for('dashboard_routes.settings') }}"
+                        >
+
+                            ⚙
+
+                            <span>
+                                Settings
+                            </span>
+
+                        </a>
+
+
+                        <div class="profile-divider"></div>
+
+
+                        <!-- LOGOUT -->
+
+                        <a
+                            href="{{ url_for('auth_routes.logout') }}"
+                            class="logout-link"
+                        >
+
+                            ↪
+
+                            <span>
+                                Logout
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =====================================================
+             SECURITY BANNER
+        ====================================================== -->
+
+        <section class="security-banner">
+
+
+            <div class="security-banner-left">
+
+
+                <div class="secure-icon">
+                    ✓
+                </div>
+
+
+                <div>
+
+                    <span class="protected-label">
+                        ● SYSTEM PROTECTED
+                    </span>
+
+
+                    <h2>
+                        Your data is secure
+                    </h2>
+
+
+                    <p>
+                        DNA cryptography, LSTM-based key generation,
+                        and secure cloud storage are active.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SECURITY SCORE -->
+
+            <div class="security-score">
+
+                <span>
+                    Security Score
+                </span>
+
+
+                <strong>
+                    {{ stats.security_score }}%
+                </strong>
+
+
+                <div class="score-bar">
+
+                    <div
+                        class="score-progress"
+                        style="width: {{ stats.security_score }}%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
+
+        <section class="stats-grid">
+
+
+            <!-- TOTAL FILES -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <span class="stat-title">
+                        Total Files
+                    </span>
+
+                    <strong class="stat-number">
+                        {{ stats.total_files }}
+                    </strong>
+
+                    <span class="stat-description">
+                        Your secure files
+                    </span>
+
+                </div>
+
+
+                <div class="stat-icon purple">
+                    ▣
+                </div>
+
+            </div>
+
+
+
+            <!-- ENCRYPTED FILES -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <span class="stat-title">
+                        Encrypted Files
+                    </span>
+
+                    <strong class="stat-number">
+                        {{ stats.encrypted_files }}
+                    </strong>
+
+                    <span class="stat-description">
+                        Protected files
+                    </span>
+
+                </div>
+
+
+                <div class="stat-icon blue">
+                    🔐
+                </div>
+
+            </div>
+
+
+
+            <!-- STORAGE -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <span class="stat-title">
+                        Cloud Storage
+                    </span>
+
+                    <strong class="stat-number">
+
+                        {{ stats.storage_size }}
+
+                        <small>
+                            B
+                        </small>
+
+                    </strong>
+
+                    <span class="stat-description">
+                        Secure cloud objects
+                    </span>
+
+                </div>
+
+
+                <div class="stat-icon cyan">
+                    ☁
+                </div>
+
+            </div>
+
+
+
+            <!-- TRANSFERS -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <span class="stat-title">
+                        Secure Transfers
+                    </span>
+
+                    <strong class="stat-number">
+                        {{ stats.transfer_count }}
+                    </strong>
+
+                    <span class="stat-description">
+                        Recorded activities
+                    </span>
+
+                </div>
+
+
+                <div class="stat-icon pink">
+                    ↗
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             LOWER DASHBOARD
+        ====================================================== -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- RECENT ACTIVITY -->
+
+            <div
+                class="dashboard-card"
+                id="transfer-section"
+            >
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            ACTIVITY
+                        </span>
+
+                        <h2>
+                            Recent Secure Activity
+                        </h2>
+
+                    </div>
+
+
+                    <span class="activity-count">
+
+                        {{ stats.transfer_count }}
+
+                        activities
+
+                    </span>
+
+                </div>
+
+
+                <div class="activity-list">
+
+
+                    {% if activities %}
+
+                        {% for transfer in activities %}
+
+                            <div class="activity-item">
+
+
+                                <div
+                                    class="activity-icon
+                                    {% if transfer['action'] == 'UPLOAD' %}
+                                        upload
+                                    {% elif transfer['action'] == 'DOWNLOAD' %}
+                                        download
+                                    {% elif transfer['action'] == 'DELETE' %}
+                                        delete
+                                    {% endif %}"
+                                >
+
+                                    {% if transfer['action'] == 'UPLOAD' %}
+
+                                        ↑
+
+                                    {% elif transfer['action'] == 'DOWNLOAD' %}
+
+                                        ↓
+
+                                    {% elif transfer['action'] == 'DELETE' %}
+
+                                        ×
+
+                                    {% else %}
+
+                                        🔐
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="activity-info">
+
+                                    <strong>
+                                        {{ transfer["action"] }}
+                                    </strong>
+
+
+                                    <span>
+
+                                        {% if transfer["original_filename"] %}
+
+                                            {{ transfer["original_filename"] }}
+
+                                        {% else %}
+
+                                            File #{{ transfer["file_id"] }}
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="activity-time">
+
+                                    <span>
+                                        {{ transfer["created_at"] }}
+                                    </span>
+
+                                    <strong>
+                                        {{ transfer["status"] }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+                        <div class="empty-activity">
+
+                            <div>
+                                🔒
+                            </div>
+
+                            <h3>
+                                No activity yet
+                            </h3>
+
+                            <p>
+                                Upload a file to begin
+                                your secure transfer history.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            ACTIONS
+                        </span>
+
+                        <h2>
+                            Quick Access
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <a
+                        href="{{ url_for('file_routes.upload_page') }}"
+                        class="quick-action primary"
+                    >
+
+                        <span class="quick-icon">
+                            ↑
+                        </span>
+
+                        <strong>
+                            Upload File
+                        </strong>
+
+                        <span>
+                            Encrypt & secure
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('file_routes.my_files') }}"
+                        class="quick-action"
+                    >
+
+                        <span class="quick-icon">
+                            🔐
+                        </span>
+
+                        <strong>
+                            My Files
+                        </strong>
+
+                        <span>
+                            Manage encrypted files
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('transfer_routes.transfers') }}"
+                        class="quick-action"
+                    >
+
+                        <span class="quick-icon">
+                            ↔
+                        </span>
+
+                        <strong>
+                            Transfer History
+                        </strong>
+
+                        <span>
+                            View recent activity
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('dashboard_routes.security') }}"
+                        class="quick-action"
+                    >
+
+                        <span class="quick-icon">
+                            ◉
+                        </span>
+
+                        <strong>
+                            Security Monitor
+                        </strong>
+
+                        <span>
+                            Protection status
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SECURITY SECTION
+        ====================================================== -->
+
+        <section
+            class="information-section"
+            id="security-section"
+        >
+
+            <div class="information-card">
+
+                <span class="section-label">
+                    SECURITY
+                </span>
+
+
+                <h2>
+                    Protection Overview
+                </h2>
+
+
+                <div class="protection-items">
+
+                    {% for check in security_checks %}
+
+                        <div class="protection-item">
+
+                            <div class="protection-name">
+
+                                <span class="status-dot"></span>
+
+                                <span>
+                                    {{ check.name }}
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+                                {{ check.status }}
+                            </strong>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SETTINGS
+        ====================================================== -->
+
+        <section
+            class="information-section"
+            id="settings-section"
+        >
+
+            <div class="information-card">
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+
+                <h2>
+                    Account Settings
+                </h2>
+
+
+                <p>
+
+                    Logged in as
+
+                    <strong>
+                        {{ username }}
+                    </strong>
+
+                </p>
+
+
+                <a
+                    href="{{ url_for('dashboard_routes.settings') }}"
+                    class="logout-button"
+                >
+                    Open Account Settings
+                </a>
+
+
+                <br><br>
+
+
+                <a
+                    href="{{ url_for('auth_routes.logout') }}"
+                    class="logout-button"
+                >
+                    Logout from SecureData
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                ✓ Files are encrypted before storage
+            </span>
+
+
+            <span>
+                DNA Cryptography •
+                LSTM Key Generation •
+                XOR
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* ================================================
+           NOTIFICATION ELEMENTS
+        ================================================= */
+
+        const notificationWrapper =
+            document.querySelector(
+                ".notification-wrapper"
+            );
+
+
+        const notificationBtn =
+            document.getElementById(
+                "notificationBtn"
+            );
+
+
+        const notificationPanel =
+            document.getElementById(
+                "notificationPanel"
+            );
+
+
+        const notificationDot =
+            document.getElementById(
+                "notificationDot"
+            );
+
+
+        const markNotificationsRead =
+            document.getElementById(
+                "markNotificationsRead"
+            );
+
+
+
+        /* ================================================
+           PROFILE ELEMENTS
+        ================================================= */
+
+        const userProfile =
+            document.getElementById(
+                "userProfile"
+            );
+
+
+        const userProfileTrigger =
+            document.getElementById(
+                "userProfileTrigger"
+            );
+
+
+        const profileMenu =
+            document.getElementById(
+                "profileMenu"
+            );
+
+
+
+        /* ================================================
+           OPEN NOTIFICATIONS
+        ================================================= */
+
+        if (
+            notificationBtn &&
+            notificationWrapper
+        ) {
+
+            notificationBtn.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    /* Close profile */
+
+                    if (userProfile) {
+
+                        userProfile.classList.remove(
+                            "open"
+                        );
+
+                    }
+
+
+                    /* Toggle notifications */
+
+                    notificationWrapper.classList.toggle(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           NOTIFICATION PANEL
+        ================================================= */
+
+        if (notificationPanel) {
+
+            notificationPanel.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           MARK NOTIFICATIONS READ
+        ================================================= */
+
+        if (markNotificationsRead) {
+
+            markNotificationsRead.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    if (notificationDot) {
+
+                        notificationDot.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           OPEN PROFILE
+        ================================================= */
+
+        if (
+            userProfile &&
+            userProfileTrigger
+        ) {
+
+            userProfileTrigger.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    /* Close notifications */
+
+                    if (notificationWrapper) {
+
+                        notificationWrapper.classList.remove(
+                            "open"
+                        );
+
+                    }
+
+
+                    /* Toggle profile */
+
+                    userProfile.classList.toggle(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           PROFILE MENU
+        ================================================= */
+
+        if (profileMenu) {
+
+            profileMenu.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           CLICK OUTSIDE
+        ================================================= */
+
+        document.addEventListener(
+            "click",
+            function () {
+
+
+                if (notificationWrapper) {
+
+                    notificationWrapper.classList.remove(
+                        "open"
+                    );
+
+                }
+
+
+                if (userProfile) {
+
+                    userProfile.classList.remove(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+);
+
+</script>
+
+
+</body>
+
+</html>

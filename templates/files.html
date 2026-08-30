@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SecureData - My Files</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/files.css'
+        ) }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SD
+            </div>
+
+            <div>
+
+                <h2>
+                    SecureData
+                </h2>
+
+                <span>
+                    Cloud Security
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================
+             NAVIGATION
+        ======================================= -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- UPLOAD -->
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ↑
+                </span>
+
+                <span>
+                    Upload File
+                </span>
+
+            </a>
+
+
+            <!-- MY FILES -->
+
+            <a
+                href="{{ url_for('file_routes.my_files') }}"
+                class="nav-item active"
+            >
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                <span>
+                    My Files
+                </span>
+
+            </a>
+
+
+            <!-- TRANSFERS -->
+
+            <a
+                href="{{ url_for('transfer_routes.transfers') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ↔
+                </span>
+
+                <span>
+                    Transfers
+                </span>
+
+            </a>
+
+
+            <!-- SECURITY -->
+
+            <a
+                href="#security-section"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Security
+                </span>
+
+            </a>
+
+
+            <!-- SETTINGS -->
+
+            <a
+                href="#settings-section"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- ======================================
+             SECURITY STATUS
+        ======================================= -->
+
+        <div class="sidebar-security">
+
+            <div class="security-check">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    System Secure
+                </strong>
+
+                <span>
+                    All services operational
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="main-content">
+
+
+        <!-- ======================================
+             HEADER
+        ======================================= -->
+
+        <header class="header">
+
+
+            <div>
+
+                <div class="eyebrow">
+                    SECURE FILE MANAGEMENT
+                </div>
+
+
+                <h1>
+                    My Secure Files
+                </h1>
+
+
+                <p>
+                    Manage your encrypted files securely.
+                </p>
+
+            </div>
+
+
+            <!-- UPLOAD BUTTON -->
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="upload-button"
+            >
+
+                <span>
+                    ＋
+                </span>
+
+                Upload New File
+
+            </a>
+
+
+        </header>
+
+
+        <!-- ======================================
+             FLASH MESSAGE
+        ======================================= -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="flash-message">
+
+                        ✓ {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- ======================================
+             TOOLBAR
+        ======================================= -->
+
+        <section class="toolbar">
+
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <span>
+                    ⌕
+                </span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search files..."
+                    onkeyup="searchFiles()"
+                >
+
+            </div>
+
+
+            <!-- FILE COUNT -->
+
+            <div class="file-count">
+
+                <strong>
+                    {{ files|length }}
+                </strong>
+
+                Secure Files
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ======================================
+             FILE GRID
+        ======================================= -->
+
+        <section
+            class="file-grid"
+            id="fileGrid"
+        >
+
+
+            {% for file in files %}
+
+
+            <!-- ==================================
+                 FILE CARD
+            =================================== -->
+
+            <article
+                class="file-card"
+                data-name="{{ file['original_filename']|lower }}"
+            >
+
+
+                <!-- CARD TOP -->
+
+                <div class="card-top">
+
+
+                    <!-- FILE TYPE -->
+
+                    <div class="file-type-icon">
+
+                        {% set filename =
+                            file["original_filename"]|lower
+                        %}
+
+
+                        {% if filename.endswith(".pdf") %}
+
+                            PDF
+
+                        {% elif filename.endswith(".doc") or
+                              filename.endswith(".docx") %}
+
+                            DOC
+
+                        {% elif filename.endswith(".jpg") or
+                              filename.endswith(".jpeg") or
+                              filename.endswith(".png") %}
+
+                            IMG
+
+                        {% elif filename.endswith(".zip") %}
+
+                            ZIP
+
+                        {% elif filename.endswith(".txt") %}
+
+                            TXT
+
+                        {% elif filename.endswith(".csv") %}
+
+                            CSV
+
+                        {% else %}
+
+                            FILE
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- LOCK -->
+
+                    <span class="lock">
+                        🔐
+                    </span>
+
+
+                </div>
+
+
+                <!-- ==================================
+                     FILE NAME
+                =================================== -->
+
+                <h2
+                    class="file-name"
+                    title="{{ file['original_filename'] }}"
+                >
+
+                    {{ file["original_filename"] }}
+
+                </h2>
+
+
+                <!-- ==================================
+                     FILE DETAILS
+                =================================== -->
+
+                <div class="details">
+
+
+                    <div>
+
+                        <span>
+                            Size
+                        </span>
+
+                        <strong>
+                            {{ file["file_size"] }} B
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Uploaded
+                        </span>
+
+                        <strong>
+                            {{ file["uploaded_at"] }}
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ==================================
+                     STATUS
+                =================================== -->
+
+                <div class="status">
+
+
+                    <span class="status-dot"></span>
+
+
+                    {{ file["status"] }}
+
+
+                    <span class="storage">
+
+                        ☁ Secure Storage
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- ==================================
+                     ACTIONS
+                =================================== -->
+
+                <div class="actions">
+
+
+                    <!-- DOWNLOAD -->
+
+                    <a
+                        href="{{ url_for(
+                            'file_routes.download_file',
+                            file_id=file['id']
+                        ) }}"
+                        class="download"
+                    >
+
+                        ↓ Download
+
+                    </a>
+
+
+                    <!-- DELETE -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'file_routes.delete_uploaded_file',
+                            file_id=file['id']
+                        ) }}"
+                        onsubmit="
+                            return confirm(
+                                'Delete this encrypted file?'
+                            );
+                        "
+                    >
+
+                        <button
+                            type="submit"
+                            class="delete"
+                            title="Delete file"
+                        >
+
+                            🗑
+
+                        </button>
+
+                    </form>
+
+
+                </div>
+
+
+            </article>
+
+
+            {% else %}
+
+
+            <!-- ==================================
+                 EMPTY STATE
+            =================================== -->
+
+            <div class="empty-state">
+
+
+                <div class="empty-icon">
+                    🔐
+                </div>
+
+
+                <h2>
+                    No Secure Files Yet
+                </h2>
+
+
+                <p>
+                    Upload your first file to begin
+                    secure encryption.
+                </p>
+
+
+                <a
+                    href="{{ url_for('file_routes.upload_page') }}"
+                    class="upload-button"
+                >
+
+                    ＋ Upload File
+
+                </a>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </section>
+
+
+        <!-- ======================================
+             SEARCH EMPTY STATE
+        ======================================= -->
+
+        <div
+            id="noResults"
+            class="no-results"
+            style="display:none;"
+        >
+
+            <div>
+                ⌕
+            </div>
+
+            <h2>
+                No matching files
+            </h2>
+
+            <p>
+                Try a different file name.
+            </p>
+
+        </div>
+
+
+        <!-- ======================================
+             SECURITY INFORMATION
+        ======================================= -->
+
+        <section
+            class="files-security"
+            id="security-section"
+        >
+
+            <div class="security-info-card">
+
+                <div class="security-info-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        Files are encrypted before storage
+                    </strong>
+
+                    <span>
+                        DNA Cryptography •
+                        LSTM Key Generation •
+                        XOR
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             SETTINGS
+        ======================================= -->
+
+        <section
+            class="files-settings"
+            id="settings-section"
+        >
+
+            <div class="settings-card">
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h2>
+                    Account Settings
+                </h2>
+
+                <p>
+                    Your files are protected by
+                    SecureData encryption.
+                </p>
+
+                <a
+                    href="{{ url_for('auth_routes.logout') }}"
+                    class="logout-button"
+                >
+                    Logout from SecureData
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             FOOTER
+        ======================================= -->
+
+        <footer>
+
+            <div>
+
+                <span class="footer-shield">
+                    ✓
+                </span>
+
+                Files are encrypted before storage
+
+            </div>
+
+
+            <div>
+
+                DNA Cryptography •
+                LSTM Key Generation •
+                XOR
+
+            </div>
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- ==========================================
+     SEARCH SCRIPT
+========================================== -->
+
+<script>
+
+function searchFiles() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const search =
+        input.value.toLowerCase();
+
+
+    const cards =
+        document.querySelectorAll(
+            ".file-card"
+        );
+
+
+    let visible = 0;
+
+
+    cards.forEach(function(card) {
+
+        const name =
+            card.dataset.name;
+
+
+        if (name.includes(search)) {
+
+            card.style.display = "block";
+
+            visible++;
+
+        }
+        else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+
+    const noResults =
+        document.getElementById(
+            "noResults"
+        );
+
+
+    if (
+        visible === 0 &&
+        search.length > 0
+    ) {
+
+        noResults.style.display =
+            "block";
+
+    }
+    else {
+
+        noResults.style.display =
+            "none";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

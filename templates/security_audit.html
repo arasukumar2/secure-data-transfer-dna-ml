@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Security Audit Log - SecureData</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+
+    <style>
+
+        /* =====================================================
+           AUDIT PAGE
+        ====================================================== */
+
+        .audit-container {
+            margin-top: 30px;
+        }
+
+
+        .audit-card {
+            background: #11172b;
+            border: 1px solid #252d49;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+        }
+
+
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+
+        .audit-header h2 {
+            color: #ffffff !important;
+            margin: 8px 0;
+            font-size: 25px;
+        }
+
+
+        .audit-header p {
+            color: #8fa0c7 !important;
+            margin: 5px 0 0;
+        }
+
+
+        .audit-count {
+            color: #ffffff !important;
+            text-align: right;
+        }
+
+
+        .audit-count strong {
+            display: block;
+            color: #ffffff !important;
+            font-size: 28px;
+        }
+
+
+        .audit-count span {
+            color: #8fa0c7 !important;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        .audit-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        .audit-table th {
+            padding: 16px;
+            text-align: left;
+            color: #8fa0c7 !important;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid #2a314d;
+        }
+
+
+        .audit-table td {
+            padding: 18px 16px;
+            color: #ffffff !important;
+            border-bottom: 1px solid #252c46;
+            vertical-align: middle;
+        }
+
+
+        .audit-table tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        .audit-table tr:hover td {
+            background: rgba(90, 100, 180, 0.08);
+        }
+
+
+        /* =====================================================
+           ACTION
+        ====================================================== */
+
+        .audit-action {
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           DESCRIPTION
+        ====================================================== */
+
+        .audit-description {
+            color: #aeb9d5 !important;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           DATE
+        ====================================================== */
+
+        .audit-date {
+            color: #8fa0c7 !important;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ====================================================== */
+
+        .audit-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+        .audit-success {
+            background: rgba(16, 220, 150, 0.12);
+            color: #00e69a !important;
+            border: 1px solid rgba(16, 220, 150, 0.18);
+        }
+
+
+        .audit-failed {
+            background: rgba(255, 80, 100, 0.12);
+            color: #ff6575 !important;
+            border: 1px solid rgba(255, 80, 100, 0.18);
+        }
+
+
+        /* =====================================================
+           EMPTY
+        ====================================================== */
+
+        .audit-empty {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+
+        .audit-empty-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+
+        .audit-empty h3 {
+            color: #ffffff !important;
+            margin-bottom: 10px;
+        }
+
+
+        .audit-empty p {
+            color: #8fa0c7 !important;
+        }
+
+
+        /* =====================================================
+           BACK BUTTON
+        ====================================================== */
+
+        .audit-back {
+            display: inline-block;
+            margin-top: 25px;
+            color: #9b6cff !important;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+
+        .audit-back:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           AUDIT INFO
+        ====================================================== */
+
+        .audit-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+
+        .audit-info-item {
+            background: #171e35;
+            border: 1px solid #252d49;
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+
+        .audit-info-item span {
+            display: block;
+            color: #8fa0c7 !important;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+
+        .audit-info-item strong {
+            color: #ffffff !important;
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media (max-width: 768px) {
+
+            .audit-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+
+            .audit-count {
+                text-align: left;
+            }
+
+
+            .audit-table th,
+            .audit-table td {
+                padding: 12px 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app-container">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SD
+            </div>
+
+            <div class="brand-text">
+
+                <h2>
+                    SecureData
+                </h2>
+
+                <span>
+                    Cloud Security
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- UPLOAD -->
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ↑
+                </span>
+
+                <span>
+                    Upload File
+                </span>
+
+            </a>
+
+
+            <!-- MY FILES -->
+
+            <a
+                href="{{ url_for('file_routes.my_files') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                <span>
+                    My Files
+                </span>
+
+            </a>
+
+
+            <!-- TRANSFERS -->
+
+            <a
+                href="{{ url_for('transfer_routes.transfers') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ↔
+                </span>
+
+                <span>
+                    Transfers
+                </span>
+
+            </a>
+
+
+            <!-- SECURITY -->
+
+            <a
+                href="{{ url_for('dashboard_routes.security') }}"
+                class="nav-item active"
+            >
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Security
+                </span>
+
+            </a>
+
+
+            <!-- SETTINGS -->
+
+            <a
+                href="{{ url_for('dashboard_routes.settings') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- SECURITY STATUS -->
+
+        <div class="sidebar-security">
+
+
+            <div class="security-check">
+                ✓
+            </div>
+
+
+            <div>
+
+                <strong>
+                    System Secure
+                </strong>
+
+                <span>
+                    All services operational
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+
+            <div class="page-heading">
+
+
+                <span class="eyebrow">
+                    SECURITY CENTER
+                </span>
+
+
+                <h1>
+                    Security Audit Log
+                </h1>
+
+
+                <p>
+                    Monitor security-related activity for your account.
+                </p>
+
+
+            </div>
+
+
+
+            <!-- USER -->
+
+            <div class="header-actions">
+
+
+                <div class="user-profile">
+
+
+                    <div class="user-profile-trigger">
+
+
+                        <div class="user-avatar">
+
+                            {{ username[0]|upper }}
+
+                        </div>
+
+
+                        <div class="user-details">
+
+
+                            <strong>
+                                {{ username }}
+                            </strong>
+
+
+                            <span>
+                                Secure Account
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             AUDIT CONTAINER
+        ================================================== -->
+
+        <section class="audit-container">
+
+
+            <div class="audit-card">
+
+
+                <!-- =========================================
+                     HEADER
+                ========================================== -->
+
+                <div class="audit-header">
+
+
+                    <div>
+
+
+                        <span class="section-label">
+                            SECURITY ACTIVITY
+                        </span>
+
+
+                        <h2>
+                            Audit Events
+                        </h2>
+
+
+                        <p>
+                            Security events recorded by SecureData.
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="audit-count">
+
+
+                        <strong>
+                            {{ audit_logs|length }}
+                        </strong>
+
+
+                        <span>
+                            Total Events
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================================
+                     INFORMATION
+                ========================================== -->
+
+                <div class="audit-info">
+
+
+                    <div class="audit-info-item">
+
+
+                        <span>
+                            ACCOUNT
+                        </span>
+
+
+                        <strong>
+                            {{ username }}
+                        </strong>
+
+
+                    </div>
+
+
+                    <div class="audit-info-item">
+
+
+                        <span>
+                            MONITORING
+                        </span>
+
+
+                        <strong>
+                            Active
+                        </strong>
+
+
+                    </div>
+
+
+                    <div class="audit-info-item">
+
+
+                        <span>
+                            RECORD LIMIT
+                        </span>
+
+
+                        <strong>
+                            100 Events
+                        </strong>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================================
+                     AUDIT TABLE
+                ========================================== -->
+
+                {% if audit_logs %}
+
+
+                <div class="audit-table-wrapper">
+
+
+                    <table class="audit-table">
+
+
+                        <thead>
+
+
+                            <tr>
+
+
+                                <th>
+                                    Action
+                                </th>
+
+
+                                <th>
+                                    Description
+                                </th>
+
+
+                                <th>
+                                    Status
+                                </th>
+
+
+                                <th>
+                                    Date & Time
+                                </th>
+
+
+                            </tr>
+
+
+                        </thead>
+
+
+
+                        <tbody>
+
+
+                        {% for log in audit_logs %}
+
+
+                            <tr>
+
+
+                                <!-- ACTION -->
+
+                                <td>
+
+
+                                    <span class="audit-action">
+
+                                        {{ log["action"] }}
+
+                                    </span>
+
+
+                                </td>
+
+
+
+                                <!-- DESCRIPTION -->
+
+                                <td>
+
+
+                                    <span class="audit-description">
+
+                                        {{ log["description"] or "Security activity recorded." }}
+
+                                    </span>
+
+
+                                </td>
+
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+
+                                    {% if log["status"] == "SUCCESS" %}
+
+
+                                        <span
+                                            class="audit-status audit-success"
+                                        >
+                                            SUCCESS
+                                        </span>
+
+
+                                    {% else %}
+
+
+                                        <span
+                                            class="audit-status audit-failed"
+                                        >
+
+                                            {{ log["status"] }}
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+
+                                <!-- DATE -->
+
+                                <td>
+
+
+                                    <span class="audit-date">
+
+                                        {{ log["created_at"] }}
+
+                                    </span>
+
+
+                                </td>
+
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+                {% else %}
+
+
+                <!-- =========================================
+                     EMPTY STATE
+                ========================================== -->
+
+                <div class="audit-empty">
+
+
+                    <div class="audit-empty-icon">
+                        🔐
+                    </div>
+
+
+                    <h3>
+                        No audit events yet
+                    </h3>
+
+
+                    <p>
+                        Security activity will appear here
+                        when you use the application.
+                    </p>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+
+                <!-- BACK -->
+
+                <a
+                    href="{{ url_for('dashboard_routes.security') }}"
+                    class="audit-back"
+                >
+
+                    ← Back to Security Monitor
+
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="dashboard-footer">
+
+
+            <span>
+                ✓ Security events are recorded automatically
+            </span>
+
+
+            <span>
+                SecureData • Security Audit
+            </span>
+
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

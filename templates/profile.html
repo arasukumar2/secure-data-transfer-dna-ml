@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile - SecureData</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/dashboard.css'
+        ) }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SD
+            </div>
+
+            <div>
+                <h2>SecureData</h2>
+                <span>Cloud Security</span>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}"
+                class="nav-item"
+            >
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="nav-item"
+            >
+                <span class="nav-icon">↑</span>
+                <span>Upload File</span>
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.my_files') }}"
+                class="nav-item"
+            >
+                <span class="nav-icon">▣</span>
+                <span>My Files</span>
+            </a>
+
+
+            <a
+                href="{{ url_for('transfer_routes.transfers') }}"
+                class="nav-item"
+            >
+                <span class="nav-icon">↔</span>
+                <span>Transfers</span>
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}#security-section"
+                class="nav-item"
+            >
+                <span class="nav-icon">◉</span>
+                <span>Security</span>
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}#settings-section"
+                class="nav-item"
+            >
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-security">
+
+            <div class="security-check">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    System Secure
+                </strong>
+
+                <span>
+                    All services operational
+                </span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="top-header">
+
+            <div class="page-heading">
+
+                <span class="eyebrow">
+                    ACCOUNT
+                </span>
+
+                <h1>
+                    My Profile
+                </h1>
+
+                <p>
+                    Manage your SecureData account information.
+                </p>
+
+            </div>
+
+
+            <div class="user-profile">
+
+                <div class="user-avatar">
+
+                    {{ username[0]|upper }}
+
+                </div>
+
+                <div class="user-details">
+
+                    <strong>
+                        {{ username }}
+                    </strong>
+
+                    <span>
+                        Secure Account
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PROFILE CARD -->
+
+        <section class="dashboard-card profile-card">
+
+            <div class="profile-large-avatar">
+
+                {{ username[0]|upper }}
+
+            </div>
+
+
+            <h2>
+                {{ username }}
+            </h2>
+
+
+            <p class="profile-role">
+                SecureData User
+            </p>
+
+
+            <div class="profile-details">
+
+                <div class="activity-item">
+
+                    <div class="activity-info">
+
+                        <strong>
+                            Username
+                        </strong>
+
+                        <span>
+                            {{ username }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-info">
+
+                        <strong>
+                            User ID
+                        </strong>
+
+                        <span>
+                            {{ user_id }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-info">
+
+                        <strong>
+                            Account Status
+                        </strong>
+
+                        <span>
+                            Active
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-info">
+
+                        <strong>
+                            Security Status
+                        </strong>
+
+                        <span>
+                            Protected
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-actions">
+
+                <a
+                    href="{{ url_for('dashboard_routes.dashboard') }}"
+                    class="download"
+                >
+                    Back to Dashboard
+                </a>
+
+
+                <a
+                    href="{{ url_for('auth_routes.logout') }}"
+                    class="logout-button"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+
+            <span>
+                ✓ Your account is protected
+            </span>
+
+            <span>
+                SecureData • DNA Cryptography • LSTM • XOR
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

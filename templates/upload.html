@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SecureData - Upload File</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SD
+            </div>
+
+            <div>
+
+                <h2>
+                    SecureData
+                </h2>
+
+                <span>
+                    Cloud Security
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.upload_page') }}"
+                class="nav-item active"
+            >
+
+                <span class="nav-icon">
+                    ↑
+                </span>
+
+                <span>
+                    Upload File
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('file_routes.my_files') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                <span>
+                    My Files
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('transfer_routes.transfers') }}"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ↔
+                </span>
+
+                <span>
+                    Transfers
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}#security-section"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Security
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('dashboard_routes.dashboard') }}#settings-section"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- SIDEBAR SECURITY -->
+
+        <div class="sidebar-security">
+
+            <div class="security-check">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    System Secure
+                </strong>
+
+                <span>
+                    All services operational
+                </span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+
+
+        <!-- ======================================
+             HEADER
+        ====================================== -->
+
+        <header class="top-header">
+
+
+            <div class="page-heading">
+
+                <span class="eyebrow">
+                    SECURE FILE MANAGEMENT
+                </span>
+
+                <h1>
+
+                    Upload
+                    <span>
+                        File
+                    </span>
+
+                </h1>
+
+                <p>
+                    Encrypt your file before secure cloud storage.
+                </p>
+
+            </div>
+
+
+            <!-- USER AREA -->
+
+            <div class="header-actions">
+
+
+                <!-- NOTIFICATION -->
+
+                <button
+                    class="notification-button"
+                    type="button"
+                    title="Notifications"
+                >
+                    🔔
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+
+                <!-- USER PROFILE -->
+
+                <div class="user-profile">
+
+
+                    <div class="user-avatar">
+
+                        {{ session.get("username", "User")[0]|upper }}
+
+                    </div>
+
+
+                    <div class="user-details">
+
+                        <strong>
+                            {{ session.get("username", "User") }}
+                        </strong>
+
+                        <span>
+                            Secure Account
+                        </span>
+
+                    </div>
+
+
+                    <!-- PROFILE MENU -->
+
+                    <div class="profile-menu">
+
+
+                        <div class="profile-menu-header">
+
+                            <div class="large-avatar">
+
+                                {{ session.get("username", "User")[0]|upper }}
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    {{ session.get("username", "User") }}
+                                </strong>
+
+                                <span>
+                                    Secure Account
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="profile-divider"></div>
+
+
+                        <a
+                            href="{{ url_for('dashboard_routes.dashboard') }}"
+                        >
+                            👤 My Profile
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('dashboard_routes.dashboard') }}#security-section"
+                        >
+                            🔐 Security
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('dashboard_routes.dashboard') }}#settings-section"
+                        >
+                            ⚙ Settings
+                        </a>
+
+
+                        <div class="profile-divider"></div>
+
+
+                        <a
+                            href="{{ url_for('auth_routes.logout') }}"
+                            class="logout-link"
+                        >
+                            ↪ Logout
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ======================================
+             UPLOAD CONTENT
+        ====================================== -->
+
+        <section class="upload-page">
+
+
+            <!-- UPLOAD CARD -->
+
+            <div class="upload-card">
+
+
+                <div class="upload-card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            SECURE UPLOAD
+                        </span>
+
+                        <h2>
+                            Upload & Encrypt
+                        </h2>
+
+                        <p>
+                            Your file will be encrypted before
+                            being stored in secure cloud storage.
+                        </p>
+
+                    </div>
+
+
+                    <div class="upload-security-icon">
+                        🔐
+                    </div>
+
+                </div>
+
+
+                <!-- FLASH MESSAGES -->
+
+                {% with messages = get_flashed_messages() %}
+
+                    {% if messages %}
+
+                        <div class="flash-container">
+
+                            {% for message in messages %}
+
+                                <div class="flash-message">
+                                    ✓ {{ message }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+
+                <!-- UPLOAD FORM -->
+
+                <form
+                    action="{{ url_for('file_routes.upload_file') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="uploadForm"
+                >
+
+
+                    <!-- DROP AREA -->
+
+                    <label
+                        for="fileInput"
+                        class="drop-zone"
+                        id="dropZone"
+                    >
+
+                        <div class="upload-icon">
+                            ↑
+                        </div>
+
+
+                        <h3>
+                            Choose a file to upload
+                        </h3>
+
+
+                        <p>
+                            Click here or drag and drop your file
+                        </p>
+
+
+                        <span>
+                            Your file will be encrypted automatically
+                        </span>
+
+
+                        <input
+                            type="file"
+                            name="file"
+                            id="fileInput"
+                            required
+                        >
+
+                    </label>
+
+
+                    <!-- SELECTED FILE -->
+
+                    <div
+                        class="selected-file"
+                        id="selectedFile"
+                    >
+
+                        <div class="selected-file-icon">
+                            📄
+                        </div>
+
+
+                        <div class="selected-file-info">
+
+                            <strong id="fileName">
+                                No file selected
+                            </strong>
+
+                            <span id="fileSize">
+                                Select a file to continue
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SECURITY PROCESS -->
+
+                    <div class="security-process">
+
+
+                        <div class="process-item">
+
+                            <div class="process-icon">
+                                1
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    File Selected
+                                </strong>
+
+                                <span>
+                                    Choose your file
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="process-line"></div>
+
+
+                        <div class="process-item">
+
+                            <div class="process-icon">
+                                2
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Encryption
+                                </strong>
+
+                                <span>
+                                    DNA + LSTM + XOR
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="process-line"></div>
+
+
+                        <div class="process-item">
+
+                            <div class="process-icon">
+                                3
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Secure Storage
+                                </strong>
+
+                                <span>
+                                    Cloud storage
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUBMIT -->
+
+                    <button
+                        type="submit"
+                        class="upload-submit"
+                        id="uploadButton"
+                    >
+
+                        <span>
+                            🔐
+                        </span>
+
+                        Upload & Encrypt
+
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+            <!-- SECURITY INFORMATION -->
+
+            <div class="upload-info-grid">
+
+
+                <div class="info-card">
+
+                    <div class="info-icon">
+                        🧬
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            DNA Cryptography
+                        </strong>
+
+                        <span>
+                            Advanced data transformation
+                            before storage.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-icon">
+                        🧠
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            LSTM Key Generation
+                        </strong>
+
+                        <span>
+                            Intelligent key generation
+                            for secure encryption.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-icon">
+                        ☁
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Secure Cloud Storage
+                        </strong>
+
+                        <span>
+                            Only encrypted files are
+                            stored in the cloud.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ======================================
+             FOOTER
+        ====================================== -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                ✓ Files are encrypted before storage
+            </span>
+
+            <span>
+                DNA Cryptography •
+                LSTM Key Generation •
+                XOR
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+<!-- ==========================================
+     JAVASCRIPT
+========================================== -->
+
+<script>
+
+
+const fileInput =
+    document.getElementById("fileInput");
+
+
+const dropZone =
+    document.getElementById("dropZone");
+
+
+const selectedFile =
+    document.getElementById("selectedFile");
+
+
+const fileName =
+    document.getElementById("fileName");
+
+
+const fileSize =
+    document.getElementById("fileSize");
+
+
+const uploadForm =
+    document.getElementById("uploadForm");
+
+
+const uploadButton =
+    document.getElementById("uploadButton");
+
+
+/* ==========================================
+   FILE SIZE FORMAT
+========================================== */
+
+function formatFileSize(bytes) {
+
+    if (bytes === 0) {
+
+        return "0 Bytes";
+
+    }
+
+
+    const units = [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+    ];
+
+
+    const index =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
+        );
+
+
+    return (
+        parseFloat(
+            (
+                bytes /
+                Math.pow(1024, index)
+            ).toFixed(2)
+        )
+        + " "
+        + units[index]
+    );
+
+}
+
+
+/* ==========================================
+   DISPLAY SELECTED FILE
+========================================== */
+
+function displayFile(file) {
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    fileName.textContent =
+        file.name;
+
+
+    fileSize.textContent =
+        formatFileSize(file.size);
+
+
+    selectedFile.classList.add(
+        "show"
+    );
+
+
+    dropZone.classList.add(
+        "has-file"
+    );
+
+}
+
+
+/* ==========================================
+   FILE INPUT
+========================================== */
+
+fileInput.addEventListener(
+    "change",
+    function() {
+
+        if (this.files.length > 0) {
+
+            displayFile(
+                this.files[0]
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   DRAG OVER
+========================================== */
+
+dropZone.addEventListener(
+    "dragover",
+    function(event) {
+
+        event.preventDefault();
+
+        dropZone.classList.add(
+            "dragging"
+        );
+
+    }
+);
+
+
+/* ==========================================
+   DRAG LEAVE
+========================================== */
+
+dropZone.addEventListener(
+    "dragleave",
+    function() {
+
+        dropZone.classList.remove(
+            "dragging"
+        );
+
+    }
+);
+
+
+/* ==========================================
+   DROP FILE
+========================================== */
+
+dropZone.addEventListener(
+    "drop",
+    function(event) {
+
+        event.preventDefault();
+
+
+        dropZone.classList.remove(
+            "dragging"
+        );
+
+
+        const files =
+            event.dataTransfer.files;
+
+
+        if (files.length > 0) {
+
+            fileInput.files =
+                files;
+
+
+            displayFile(
+                files[0]
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   UPLOAD PROCESS
+========================================== */
+
+uploadForm.addEventListener(
+    "submit",
+    function() {
+
+        if (
+            fileInput.files.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        uploadButton.disabled =
+            true;
+
+
+        uploadButton.innerHTML =
+            "🔐 Encrypting & Uploading...";
+
+    }
+);
+
+
+/* ==========================================
+   PROFILE MENU
+========================================== */
+
+const userProfile =
+    document.querySelector(
+        ".user-profile"
+    );
+
+
+if (userProfile) {
+
+    userProfile.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            userProfile.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+}
+
+
+document.addEventListener(
+    "click",
+    function() {
+
+        if (userProfile) {
+
+            userProfile.classList.remove(
+                "open"
+            );
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
