@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Blueprint,
     request,
@@ -70,6 +72,28 @@ def register():
 
             flash(
                 "Password must contain at least 6 characters."
+            )
+
+            return redirect(
+                url_for(
+                    "auth_routes.register"
+                )
+            )
+
+
+        # ======================================
+        # RESERVE ADMIN USERNAME
+        # ======================================
+
+        admin_username = os.environ.get(
+            "ADMIN_USERNAME",
+            "ADMIN"
+        )
+
+        if username.lower() == admin_username.lower():
+
+            flash(
+                "This username is reserved."
             )
 
             return redirect(
@@ -299,6 +323,8 @@ def login():
 
         session["username"] = user["username"]
 
+        session["role"] = user["role"]
+
 
         # ======================================
         # AUDIT LOG - SUCCESSFUL LOGIN
@@ -332,7 +358,7 @@ def login():
         # REDIRECT BASED ON USER ROLE
         # ======================================
 
-        if user["username"].lower() == "admin":
+        if user["role"] == "admin":
 
             return redirect(
                 url_for(

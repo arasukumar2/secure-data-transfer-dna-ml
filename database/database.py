@@ -56,6 +56,40 @@ def initialize_database():
 
 
     # ======================================
+    # ADD ROLE COLUMN IF MISSING
+    # ======================================
+
+    cursor.execute("""
+        PRAGMA table_info(users)
+    """)
+
+    user_columns = cursor.fetchall()
+
+    column_names = [
+        column["name"]
+        for column in user_columns
+    ]
+
+    if "role" not in column_names:
+
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN role TEXT
+            DEFAULT 'user'
+        """)
+
+        print(
+            "role column added successfully."
+        )
+
+    else:
+
+        print(
+            "role column already exists."
+        )
+
+
+    # ======================================
     # FILES TABLE
     # ======================================
 
@@ -188,10 +222,6 @@ def add_user_id_column():
     connection.close()
 
 
-# ==========================================
-# CREATE USER
-# ==========================================
-
 def create_user(
     username,
     password_hash
@@ -207,12 +237,14 @@ def create_user(
             INSERT INTO users (
                 username,
                 password_hash,
+                role,
                 created_at
             )
-            VALUES (?, ?, ?)
+            VALUES (?, ?, ?, ?)
         """, (
             username,
             password_hash,
+            "user",
             datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
@@ -224,21 +256,14 @@ def create_user(
 
         return user_id
 
-    except sqlite3.IntegrityError as error:
-
-        print(
-            "Database integrity error:",
-            error
-        )
-
-        return None
-
     except Exception as error:
 
         print(
-            "Database error:",
+            "CREATE USER ERROR:",
             error
         )
+
+        connection.rollback()
 
         return None
 
@@ -247,6 +272,119 @@ def create_user(
         connection.close()
 
 
+# ==========================================
+# CREATE INITIAL ADMIN FROM ENVIRONMENT
+# ==========================================
+
+def create_initial_admin():
+
+    import os
+
+    admin_username = os.environ.get(
+        "ADMIN_USERNAME"
+    )
+
+    admin_password = os.environ.get(
+        "ADMIN_PASSWORD"
+    )
+
+    if not admin_username or not admin_password:
+
+        print(
+            "ADMIN environment variables not configured."
+        )
+
+        return
+
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    try:
+
+        # Check whether admin already exists
+
+        cursor.execute("""
+            SELECT id
+            FROM users
+            WHERE username = ?
+        """, (
+            admin_username,
+        ))
+
+        existing_admin = cursor.fetchone()
+
+
+        if existing_admin:
+
+            cursor.execute("""
+                UPDATE users
+                SET role = 'admin'
+                WHERE id = ?
+            """, (
+                existing_admin["id"],
+            ))
+
+            connection.commit()
+
+            print(
+                "Admin account already exists."
+            )
+
+            return
+
+
+        # Create admin account
+
+        from werkzeug.security import (
+            generate_password_hash
+        )
+
+        password_hash = (
+            generate_password_hash(
+                admin_password
+            )
+        )
+
+
+        cursor.execute("""
+            INSERT INTO users (
+                username,
+                password_hash,
+                role,
+                created_at
+            )
+            VALUES (?, ?, ?, ?)
+        """, (
+            admin_username,
+            password_hash,
+            "admin",
+            datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        ))
+
+
+        connection.commit()
+
+        print(
+            "Initial admin account created."
+        )
+
+
+    except Exception as error:
+
+        connection.rollback()
+
+        print(
+            "ADMIN CREATION ERROR:",
+            error
+        )
+
+    finally:
+
+        connection.close()
 # ==========================================
 # GET USER BY USERNAME
 # ==========================================
