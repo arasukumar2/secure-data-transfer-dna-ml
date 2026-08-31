@@ -22,7 +22,7 @@ from database.database import (
     create_initial_admin
 )
 
-initialize_database()
+
 
 create_initial_admin()
 

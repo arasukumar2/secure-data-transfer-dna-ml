@@ -1,8 +1,6 @@
 import secrets
 import numpy as np
 
-from tensorflow.keras.models import load_model
-
 from crypto.dna_encoder import bytes_to_dna
 from crypto.dna_decoder import dna_to_bytes
 from crypto.encryption import xor_encrypt, xor_decrypt
@@ -33,12 +31,14 @@ def generate_pseudo_key(length=5):
 # ==========================================
 # GENERATE LSTM KEY
 # ==========================================
-
 def generate_lstm_key(pseudo_key):
     """
     Generate an encryption key using
     the trained LSTM model.
     """
+
+    # Load TensorFlow only when the ML model is actually needed.
+    from tensorflow.keras.models import load_model
 
     model = load_model(
         MODEL_PATH
@@ -56,12 +56,10 @@ def generate_lstm_key(pseudo_key):
             axis=0
         )
 
-
     prediction = model.predict(
         pseudo_key,
         verbose=0
     )
-
 
     key_value = int(
         np.argmax(
@@ -70,13 +68,12 @@ def generate_lstm_key(pseudo_key):
         )[0]
     )
 
-
     key = bytes([
         key_value % 256
     ])
 
-
     return key
+
 
 
 # ==========================================
