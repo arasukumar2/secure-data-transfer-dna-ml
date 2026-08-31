@@ -39,6 +39,7 @@ packaging==26.3
 pandas==3.0.5
 proto-plus==1.28.4
 protobuf==7.36.0
+psycopg2-binary==2.9.12
 pyasn1==0.6.4
 pyasn1_modules==0.4.2
 pycparser==3.0

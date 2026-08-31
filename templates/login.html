@@ -14,7 +14,6 @@
 
 </head>
 
-
 <body>
 
     <h1>
@@ -24,7 +23,6 @@
     <h2>
         Login
     </h2>
-
 
     {% with messages = get_flashed_messages() %}
 
@@ -39,7 +37,10 @@
     {% endwith %}
 
 
-    <form method="POST">
+    <form
+        method="POST"
+        id="loginForm"
+    >
 
         <input
             type="text"
@@ -59,6 +60,12 @@
 
         <br><br>
 
+        <input
+            type="hidden"
+            name="tab_token"
+            id="tabToken"
+        >
+
         <button type="submit">
             Login
         </button>
@@ -75,6 +82,58 @@
         </a>
 
     </p>
+
+
+    <script>
+
+        const TAB_TOKEN_KEY =
+            "secure_data_transfer_tab_token";
+
+
+        function createTabToken() {
+
+            const bytes =
+                new Uint8Array(32);
+
+            crypto.getRandomValues(
+                bytes
+            );
+
+            return Array.from(
+                bytes,
+                byte =>
+                    byte.toString(16)
+                        .padStart(2, "0")
+            ).join("");
+
+        }
+
+
+        let tabToken =
+            sessionStorage.getItem(
+                TAB_TOKEN_KEY
+            );
+
+
+        if (!tabToken) {
+
+            tabToken =
+                createTabToken();
+
+            sessionStorage.setItem(
+                TAB_TOKEN_KEY,
+                tabToken
+            );
+
+        }
+
+
+        document.getElementById(
+            "tabToken"
+        ).value = tabToken;
+
+
+    </script>
 
 </body>
 

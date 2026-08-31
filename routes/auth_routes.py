@@ -18,7 +18,10 @@ from werkzeug.security import (
 from database.database import (
     create_user,
     get_user_by_username,
-    add_security_audit_log
+    add_security_audit_log,
+    create_tab_session,
+    delete_tab_session,
+    get_user_by_tab_token
 )
 
 
@@ -319,11 +322,53 @@ def login():
         # LOGIN SUCCESS
         # ======================================
 
-        session["user_id"] = user["id"]
+        tab_token = request.form.get(
+            "tab_token",
+            ""
+        ).strip()
 
-        session["username"] = user["username"]
+        if not tab_token:
 
-        session["role"] = user["role"]
+            flash(
+                "Browser tab could not be identified"
+                "Please refresh the login page and try again."
+            )
+            return redirect(
+                url_for(
+                    "auth_routes.login"
+                )
+            )
+        try:
+            delete_tab_session(
+                tab_token
+            )
+        except Exception:
+            pass
+
+        if not create_tab_session(
+            tab_token,
+            user["id"]
+):
+
+            flash(
+                "Could not create secure tab session."
+            )
+
+            return redirect(
+                url_for(
+                    "auth_routes.login"
+                )
+            )
+
+
+        # Flask session stores ONLY the token.
+        # It does NOT determine the user.
+        session.clear()
+
+        session["tab_token"] = tab_token
+    
+
+
 
 
         # ======================================
@@ -362,14 +407,16 @@ def login():
 
             return redirect(
                 url_for(
-                    "dashboard_routes.admin_dashboard"
+                    "dashboard_routes.admin_dashboard",
+                    tab_token=tab_token
                 )
             )
 
 
         return redirect(
             url_for(
-                "dashboard_routes.dashboard"
+                "dashboard_routes.dashboard",
+                tab_token=tab_token
             )
         )
 
@@ -393,13 +440,36 @@ def logout():
     # BEFORE CLEARING SESSION
     # ======================================
 
-    user_id = session.get(
-        "user_id"
+    tab_token = request.args.get(
+        "tab_token"
     )
 
-    username = session.get(
-        "username",
-        "User"
+    if not tab_token:
+
+        tab_token = session.get(
+            "tab_token"
+        )   
+
+
+    user = None
+
+    if tab_token:
+
+        user = get_user_by_tab_token(
+            tab_token
+        )
+
+
+    user_id = (
+        user["id"]
+        if user
+        else None
+    )   
+
+    username = (
+        user["username"]
+        if user
+        else "User"
     )
 
 
@@ -432,7 +502,11 @@ def logout():
     # ======================================
     # CLEAR SESSION
     # ======================================
+    if tab_token:
 
+        delete_tab_session(
+        tab_token
+        )
     session.clear()
 
 

@@ -18,3 +18,22 @@ cloud_storage/__pycache__/*
 .idea/
 
 *.log
+
+# Project backup / temporary files
+database/*_backup.py
+database_code.txt
+database_full_code.txt
+project_structure.txt
+migrate_sqlite_to_postgres.py
+
+app_before_*.py
+
+routes/*_backup.py
+routes/*_before_tab.py
+
+templates/*_before_tab.html
+
+utils/*_backup.py
+utils/*_before_tab.pyroutes/auth_routes_before_tab2.py
+routes/auth_routes_before_tab2.py
+utils/auth_utils_before_tab.py
